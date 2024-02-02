@@ -1,15 +1,13 @@
 /*****************************************************************************
-* | File      	:   DEV_Config.h
+* | File      	:	LCD_Test.h
 * | Author      :   Waveshare team
-* | Function    :   Hardware underlying interface
+* | Function    :   LCD test Demo
 * | Info        :
-*                Used to shield the underlying layers of each master 
-*                and enhance portability
 *----------------
 * |	This version:   V1.0
-* | Date        :   2018-11-22
-* | Info        :
-
+* | Date        :   2020-06-09
+* | Info        :   
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documnetation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
@@ -29,54 +27,14 @@
 # THE SOFTWARE.
 #
 ******************************************************************************/
-#ifndef _DEV_CONFIG_H_
-#define _DEV_CONFIG_H_
+#ifndef _EPD_TEST_H_
+#define _EPD_TEST_H_
 
-#include "stm32f1xx_hal.h"
-#include <stdint.h>
-#include <stdio.h>
-#include "spi.h"
-#include "tim.h"
+#include "DEV_Config.h"
+#include "GUI_Paint.h"
 #include "Debug.h"
-#include "main.h"
+#include <stdlib.h> // malloc() free()
 
-#define UBYTE   uint8_t
-#define UWORD   uint16_t
-#define UDOUBLE uint32_t
+void LCD_1in28_test(void);
 
-/**
- * GPIO config
-**/
-#define DEV_RST_PIN     RST_GPIO_Port,RST_Pin		//PA9
-#define DEV_DC_PIN      DC_GPIO_Port,DC_Pin			//PA8
-#define DEV_CS_PIN			CS_GPIO_Port,CS_Pin			//PB6
-#define DEV_BL_PIN			TIM3->CCR2 							//PC7
-
-/**
- * GPIO read and write
-**/
-#define DEV_Digital_Write(_pin, _value) HAL_GPIO_WritePin(_pin, _value == 0? GPIO_PIN_RESET:GPIO_PIN_SET)
-#define DEV_Digital_Read(_pin) HAL_GPIO_ReadPin(_pin)
-
-/**
- * SPI
-**/
-#define DEV_SPI_WRITE(_dat)  DEV_SPI_WRite(_dat);
-
-
-/**
- * delay x ms
-**/
-#define DEV_Delay_ms(__xms) HAL_Delay(__xms)
-
-/**
- * PWM_BL
-**/
-
-#define DEV_Set_PWM(_Value)     DEV_BL_PIN= _Value
-
-/*-----------------------------------------------------------------------------*/
-void DEV_SPI_WRite(UBYTE _dat);
-int DEV_Module_Init(void);
-void DEV_Module_Exit(void);
 #endif

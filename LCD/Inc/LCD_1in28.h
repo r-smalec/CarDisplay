@@ -28,21 +28,10 @@
 #define HORIZONTAL 0
 #define VERTICAL   1
 
-#define LCD_1IN28_SetBacklight(Value) DEV_SetBacklight(Value) 
-
-#define LCD_1IN28_CS_0	    DEV_Digital_Write(DEV_CS_PIN, 0) 
-#define LCD_1IN28_CS_1	    DEV_Digital_Write(DEV_CS_PIN, 1)
-	                        
-#define LCD_1IN28_RST_0	  DEV_Digital_Write(DEV_RST_PIN,0)
-#define LCD_1IN28_RST_1	  DEV_Digital_Write(DEV_RST_PIN,1)
-	                        
-#define LCD_1IN28_DC_0	    DEV_Digital_Write(DEV_DC_PIN, 0)
-#define LCD_1IN28_DC_1	    DEV_Digital_Write(DEV_DC_PIN, 1)  
-
 typedef struct{
-	UWORD WIDTH;
-	UWORD HEIGHT;
-	UBYTE SCAN_DIR;
+	uint16_t WIDTH;
+	uint16_t HEIGHT;
+	uint8_t SCAN_DIR;
 }LCD_1IN28_ATTRIBUTES;
 extern LCD_1IN28_ATTRIBUTES LCD_1IN28;
 
@@ -50,12 +39,12 @@ extern LCD_1IN28_ATTRIBUTES LCD_1IN28;
 function:	
 			Macro definition variable name
 ********************************************************************************/
-void LCD_1IN28_Init(UBYTE Scan_dir);
-void LCD_1IN28_Clear(UWORD Color);
-void LCD_1IN28_Display(UWORD *Image);
-void LCD_1IN28_DisplayWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD *Image);
-void LCD_1IN28_DisplayPoint(UWORD X, UWORD Y, UWORD Color);
+void LCD_1IN28_Init(uint8_t Scan_dir);
+void LCD_1IN28_Clear(uint16_t Color);
+void LCD_1IN28_Display(uint16_t *Image);
+void LCD_1IN28_DisplayWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t *Image);
+void LCD_1IN28_DisplayPoint(uint16_t X, uint16_t Y, uint16_t Color);
 
-void LCD_1IN28_DrawPaint(UWORD x, UWORD y, UWORD Color);
-void LCD_1IN28_SetBackLight(UWORD Value);
+void LCD_1IN28_DrawPaint(uint16_t x, uint16_t y, uint16_t Color);
+void LCD_1IN28_SetBackLight(uint8_t Value);
 #endif

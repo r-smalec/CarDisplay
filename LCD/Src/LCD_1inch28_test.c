@@ -23,7 +23,7 @@ void LCD_1in28_test()
 
   printf("Paint_Clear\r\n");
 	Paint_Clear(BLACK);
-  DEV_Delay_ms(100); 
+  HAL_Delay(100);
 	
 	printf("drawing...\r\n");
 	
@@ -33,14 +33,13 @@ void LCD_1in28_test()
   Paint_DrawLine  (0, 120, 12, 120,GREEN ,DOT_PIXEL_4X4,LINE_STYLE_SOLID);
   Paint_DrawLine  (228, 120, 240, 120,GREEN ,DOT_PIXEL_4X4,LINE_STYLE_SOLID);
 
-  Paint_DrawImage(gImage_70X70, 85, 25, 70, 70); 
-  Paint_DrawString_CN(56,140, "Î¢Ñ©µç×Ó",   &Font24CN,BLACK,  WHITE);
+  //Paint_DrawImage(gImage_70X70, 85, 25, 70, 70);
   Paint_DrawString_EN(123, 123, "WAVESHARE",&Font16,  BLACK, GREEN); 
 	
 	Paint_DrawLine  (120, 120, 70, 70,YELLOW ,DOT_PIXEL_3X3,LINE_STYLE_SOLID);
 	Paint_DrawLine  (120, 120, 176, 64,BLUE ,DOT_PIXEL_3X3,LINE_STYLE_SOLID);
 	Paint_DrawLine  (120, 120, 120, 210,RED ,DOT_PIXEL_2X2,LINE_STYLE_SOLID);
-	DEV_Delay_ms(1000);
+	Hal_Delay(1000);
 
 	printf("quit...\r\n");
 	DEV_Module_Exit();

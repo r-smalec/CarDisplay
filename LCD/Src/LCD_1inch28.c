@@ -1,90 +1,17 @@
-/*****************************************************************************
-* | File      	:   LCD_1inch28.c
-* | Author      :   Waveshare team
-* | Function    :   Hardware underlying interface
-* | Info        :
-*                Used to shield the underlying layers of each master
-*                and enhance portability
-*----------------
-* |	This version:   V1.0
-* | Date        :   2020-12-06
-* | Info        :   Basic version
-*
-******************************************************************************/
+#include <DEV_Config.h>
 #include "LCD_1in28.h"
-#include "DEV_Config.h"
-
-#include <stdlib.h>		//itoa()
+#include <stdlib.h>
 #include <stdio.h>
 
 LCD_1IN28_ATTRIBUTES LCD_1IN28;
 
+static void LCD_1IN28_InitReg(void) {
 
-/******************************************************************************
-function :	Hardware reset
-parameter:
-******************************************************************************/
-static void LCD_1IN28_Reset(void)
-{
-    LCD_1IN28_RST_1;
-    DEV_Delay_ms(100);
-    LCD_1IN28_RST_0;
-    DEV_Delay_ms(100);
-    LCD_1IN28_RST_1;
-    DEV_Delay_ms(100);
-}
-
-/******************************************************************************
-function :	send command
-parameter:
-     Reg : Command register
-******************************************************************************/
-static void LCD_1IN28_SendCommand(UBYTE Reg)
-{
-    LCD_1IN28_DC_0;
-    LCD_1IN28_CS_0;
-    DEV_SPI_WRITE(Reg);
-    // LCD_1IN28_CS_1;
-}
-
-/******************************************************************************
-function :	send data
-parameter:
-    Data : Write data
-******************************************************************************/
-static void LCD_1IN28_SendData_8Bit(UBYTE Data)
-{
-    LCD_1IN28_DC_1;
-    LCD_1IN28_CS_0;
-    DEV_SPI_WRITE(Data);
-    LCD_1IN28_CS_1;
-}
-
-/******************************************************************************
-function :	send data
-parameter:
-    Data : Write data
-******************************************************************************/
-static void LCD_1IN28_SendData_16Bit(UWORD Data)
-{
-    LCD_1IN28_DC_1;
-    LCD_1IN28_CS_0;
-    DEV_SPI_WRITE(Data >> 8);
-    DEV_SPI_WRITE(Data);
-    LCD_1IN28_CS_1;
-}
-
-/******************************************************************************
-function :	Initialize the lcd register
-parameter:
-******************************************************************************/
-static void LCD_1IN28_InitReg(void)
-{
-  LCD_1IN28_SendCommand(0xEF);
+	LCD_1IN28_SendCommand(0xEF);
 	LCD_1IN28_SendCommand(0xEB);
 	LCD_1IN28_SendData_8Bit(0x14); 
 	
-  LCD_1IN28_SendCommand(0xFE);			 
+	LCD_1IN28_SendCommand(0xFE);
 	LCD_1IN28_SendCommand(0xEF); 
 
 	LCD_1IN28_SendCommand(0xEB);	
@@ -303,7 +230,7 @@ static void LCD_1IN28_InitReg(void)
 	LCD_1IN28_SendData_8Bit(0x4E);
 	LCD_1IN28_SendData_8Bit(0x00);					
 	
-  LCD_1IN28_SendCommand(0x98);			
+	LCD_1IN28_SendCommand(0x98);
 	LCD_1IN28_SendData_8Bit(0x3e);
 	LCD_1IN28_SendData_8Bit(0x07);
 
@@ -311,21 +238,16 @@ static void LCD_1IN28_InitReg(void)
 	LCD_1IN28_SendCommand(0x21);
 
 	LCD_1IN28_SendCommand(0x11);
-	DEV_Delay_ms(120);
+	HAL_Delay(120);
 	LCD_1IN28_SendCommand(0x29);
-	DEV_Delay_ms(20);
+	HAL_Delay(20);
 }
 
-/********************************************************************************
-function:	Set the resolution and scanning method of the screen
-parameter:
-		Scan_dir:   Scan direction
-********************************************************************************/
-static void LCD_1IN28_SetAttributes(UBYTE Scan_dir)
-{
+static void LCD_1IN28_SetAttributes(uint8_t Scan_dir) {
+
     //Get the screen scan direction
     LCD_1IN28.SCAN_DIR = Scan_dir;
-    UBYTE MemoryAccessReg = 0x08;
+    uint8_t MemoryAccessReg = 0x08;
 
     //Get GRAM and LCD width and height
     if(Scan_dir == HORIZONTAL) {
@@ -343,12 +265,7 @@ static void LCD_1IN28_SetAttributes(UBYTE Scan_dir)
     LCD_1IN28_SendData_8Bit(MemoryAccessReg);	//0x08 set RGB
 }
 
-/********************************************************************************
-function :	Initialize the lcd
-parameter:
-********************************************************************************/
-void LCD_1IN28_Init(UBYTE Scan_dir)
-{
+void LCD_1IN28_Init(uint8_t Scan_dir) {
 
     //Hardware reset
     LCD_1IN28_Reset();
@@ -368,8 +285,8 @@ parameter:
 		Xend    :   X direction end coordinates
 		Yend    :   Y direction end coordinates
 ********************************************************************************/
-void LCD_1IN28_SetWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend)
-{
+void LCD_1IN28_SetWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend) {
+
     //set the X coordinates
     LCD_1IN28_SendCommand(0x2A);
     LCD_1IN28_SendData_8Bit(0x00);
@@ -387,13 +304,9 @@ void LCD_1IN28_SetWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend)
     LCD_1IN28_SendCommand(0X2C);
 }
 
-/******************************************************************************
-function :	Clear screen
-parameter:
-******************************************************************************/
-void LCD_1IN28_Clear(UWORD Color)
-{
-    UWORD i,j;
+void LCD_1IN28_Clear(uint16_t Color) {
+
+    uint16_t i,j;
     LCD_1IN28_SetWindows(0, 0, LCD_1IN28_WIDTH-1, LCD_1IN28_HEIGHT-1);
 
 	DEV_Digital_Write(DEV_DC_PIN, 1);
@@ -405,13 +318,9 @@ void LCD_1IN28_Clear(UWORD Color)
 	 }
 }
 
-/******************************************************************************
-function :	Sends the image buffer in RAM to displays
-parameter:
-******************************************************************************/
-void LCD_1IN28_Display(UWORD *Image)
-{
-    UWORD i,j;
+void LCD_1IN28_Display(uint16_t *Image) {
+
+    uint16_t i,j;
     LCD_1IN28_SetWindows(0, 0, LCD_1IN28_WIDTH-1, LCD_1IN28_HEIGHT-1);
     DEV_Digital_Write(DEV_DC_PIN, 1);
     for(i = 0; i < LCD_1IN28_WIDTH; i++){
@@ -422,14 +331,14 @@ void LCD_1IN28_Display(UWORD *Image)
     }
 }
 
-void LCD_1IN28_DisplayWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD *Image)
-{
-    // display
-    UDOUBLE Addr = 0;
+void LCD_1IN28_DisplayWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t *Image) {
 
-    UWORD i,j;
+    // display
+    uint32_t Addr = 0;
+
+    uint16_t i,j;
     LCD_1IN28_SetWindows(Xstart, Ystart, Xend-1 , Yend-1);
-    LCD_1IN28_DC_1;
+    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
     for (i = Ystart; i < Yend - 1; i++) {
         Addr = Xstart + i * LCD_1IN28_WIDTH ;
         for(j=Xstart;j<Xend-1;j++){
@@ -446,20 +355,15 @@ parameter	:
 	    Y	:	Set the Y coordinate
 	  Color :	Set the color
 ******************************************************************************/
-void LCD_1IN28_DrawPaint(UWORD x, UWORD y, UWORD Color)
+void LCD_1IN28_DrawPaint(uint16_t x, uint16_t y, uint16_t Color)
 {
 	LCD_1IN28_SetWindows(x,y,x,y);
 	LCD_1IN28_SendData_16Bit(Color); 	    
 }
 
-/*******************************************************************************
-function:
-	Setting backlight
-parameter	:
-	  value : Range 0~1000   Duty cycle is value/1000	
-*******************************************************************************/
-void LCD_1IN28_SetBackLight(UWORD Value)
-{
-	DEV_Set_PWM(Value);
+
+void LCD_1IN28_SetBackLight(uint8_t Value) {
+
+	HAL_GPIO_WritePin(DEV_BL_PIN, Value);
 }
 
