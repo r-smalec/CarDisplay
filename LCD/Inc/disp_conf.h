@@ -23,10 +23,6 @@ SPI_HandleTypeDef *_hspi;
 
 void DISP_Init(SPI_HandleTypeDef *hspi, uint8_t Scan_dir);
 void DISP_Exit(void);
-void DISP_Reset(void);
-void DISP_SendCommand(uint8_t reg);
-void DISP_SendData_8Bit(uint8_t data);
-void DISP_SendData_16Bit(uint16_t data);
 
 void DISP_Clear(uint16_t Color);
 void DISP_Display(uint16_t *Image);

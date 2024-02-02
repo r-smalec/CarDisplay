@@ -67,9 +67,9 @@
 #ifndef __GUI_PAINT_H
 #define __GUI_PAINT_H
 
-#include "DEV_Config.h"
+#include "disp_conf.h"
 #include "fonts.h"
-#include "Debug.h"
+#include "debug.h"
 /**
  * Image attributes
 **/
@@ -117,25 +117,25 @@ typedef enum {
 #define GRED 					0XFFE0
 #define GBLUE					0X07FF
 #define RED  					0xF800
-#define MAGENTA				0xF81F
+#define MAGENTA					0xF81F
 #define GREEN					0x07E0
 #define CYAN 					0x7FFF
-#define YELLOW				0xFFE0
+#define YELLOW					0xFFE0
 #define BROWN					0XBC40 
 #define BRRED					0XFC07 
 #define GRAY 					0X8430 
-#define DARKBLUE			0X01CF	
-#define LIGHTBLUE			0X7D7C	 
-#define GRAYBLUE      0X5458 
-#define LIGHTGREEN    0X841F 
-#define LGRAY 			  0XC618 
-#define LGRAYBLUE     0XA651
-#define LBBLUE        0X2B12 
+#define DARKBLUE				0X01CF
+#define LIGHTBLUE				0X7D7C
+#define GRAYBLUE      			0X5458
+#define LIGHTGREEN    			0X841F
+#define LGRAY 			  		0XC618
+#define LGRAYBLUE     			0XA651
+#define LBBLUE        			0X2B12
 
 
-#define IMAGE_BACKGROUND    WHITE
-#define FONT_FOREGROUND     BLACK
-#define FONT_BACKGROUND     WHITE
+#define IMAGE_BACKGROUND    	WHITE
+#define FONT_FOREGROUND     	BLACK
+#define FONT_BACKGROUND     	WHITE
 
 /**
  * The size of the point
@@ -211,8 +211,7 @@ void Paint_DrawCircle(uint16_t X_Center, uint16_t Y_Center, uint16_t Radius, uin
 
 //Display string
 void Paint_DrawChar(uint16_t Xstart, uint16_t Ystart, const char Acsii_Char, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
-void Paint_DrawString_EN(uint16_t Xstart, uint16_t Ystart, const char * pString, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
-void Paint_DrawString_CN(uint16_t Xstart, uint16_t Ystart, const char * pString, cFONT* font, uint16_t Color_Background, uint16_t Color_Foreground);
+void Paint_DrawString(uint16_t Xstart, uint16_t Ystart, const char * pString, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
 void Paint_DrawNum(uint16_t Xpoint, uint16_t Ypoint, int32_t Nummber, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
 void Paint_DrawTime(uint16_t Xstart, uint16_t Ystart, PAINT_TIME *pTime, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
 

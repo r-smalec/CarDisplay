@@ -1,31 +1,4 @@
-#include "DEV_Config.h"
-
-void DISP_Init(SPI_HandleTypeDef *hspi) {
-
-	_hspi = hspi;
-
-    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
-    HAL_GPIO_WritePin(DEV_CS_PIN, 1);
-    HAL_GPIO_WritePin(DEV_RST_PIN, 1);
-    HAL_GPIO_WritePin(DEV_BL_PIN, 1);
-
-    //Hardware reset
-    DISP_Reset();
-
-    //Set the resolution and scanning method of the screen
-    DISP_SetAttributes(Scan_dir);
-
-    //Set the initialization register
-    DISP_InitReg();
-}
-
-void DISP_Exit(void) {
-
-    HAL_GPIO_WritePin(DEV_DC_PIN, 0);
-    HAL_GPIO_WritePin(DEV_CS_PIN, 0);
-    HAL_GPIO_WritePin(DEV_RST_PIN, 0);
-    HAL_GPIO_WritePin(DEV_BL_PIN, 0);
-}
+#include "disp_conf.h"
 
 static void DISP_Reset(void) {
 
@@ -83,96 +56,6 @@ static void DISP_SetAttributes(uint8_t Scan_dir) {
     // Set the read / write scan direction of the frame memory
     DISP_SendCommand(0x36); //MX, MY, RGB mode
     DISP_SendData_8Bit(MemoryAccessReg);	//0x08 set RGB
-}
-
-/********************************************************************************
-function:	Sets the start position and size of the display area
-parameter:
-		Xstart 	:   X direction Start coordinates
-		Ystart  :   Y direction Start coordinates
-		Xend    :   X direction end coordinates
-		Yend    :   Y direction end coordinates
-********************************************************************************/
-void DISP_SetWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend) {
-
-    //set the X coordinates
-    DISP_SendCommand(0x2A);
-    DISP_SendData_8Bit(0x00);
-    DISP_SendData_8Bit(Xstart);
-    DISP_SendData_8Bit(0x00);
-    DISP_SendData_8Bit(Xend);
-
-    //set the Y coordinates
-    DISP_SendCommand(0x2B);
-    DISP_SendData_8Bit(0x00);
-    DISP_SendData_8Bit(Ystart);
-    DISP_SendData_8Bit(0x00);
-    DISP_SendData_8Bit(Yend);
-
-    DISP_SendCommand(0X2C);
-}
-
-void DISP_Clear(uint16_t Color) {
-
-    uint16_t i,j;
-    DISP_SetWindows(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1);
-
-    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
-	for(i = 0; i < DISP_WIDTH; i++){
-		for(j = 0; j < DISP_HEIGHT; j++){
-			DISP_SPI_send(Color>>8);
-			DISP_SPI_send(Color);
-		}
-	 }
-}
-
-void DISP_Display(uint16_t *Image) {
-
-    uint16_t i,j;
-    DISP_SetWindows(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1);
-    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
-    for(i = 0; i < DISP_WIDTH; i++){
-      for(j = 0; j < DISP_HEIGHT; j++){
-        DISP_SPI_send((*Image+i*DISP_WIDTH+j)>>8);
-        DISP_SPI_send(*(Image+i*DISP_WIDTH+j));
-      }
-    }
-}
-
-void DISP_DisplayWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t *Image) {
-
-    // display
-    uint32_t Addr = 0;
-
-    uint16_t i,j;
-    DISP_SetWindows(Xstart, Ystart, Xend-1 , Yend-1);
-    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
-    for (i = Ystart; i < Yend - 1; i++) {
-        Addr = Xstart + i * DISP_WIDTH ;
-        for(j=Xstart;j<Xend-1;j++){
-          DISP_SPI_send(*(Image+Addr+j)>>8);
-          DISP_SPI_send(*(Image+Addr+j));
-        }
-    }
-}
-
-/******************************************************************************
-function: Draw a point
-parameter	:
-	    X	: 	Set the X coordinate
-	    Y	:	Set the Y coordinate
-	  Color :	Set the color
-******************************************************************************/
-void DISP_DrawPaint(uint16_t x, uint16_t y, uint16_t Color)
-{
-	DISP_SetWindows(x,y,x,y);
-	DISP_SendData_16Bit(Color);
-}
-
-
-void DISP_SetBackLight(uint8_t Value) {
-
-	HAL_GPIO_WritePin(DEV_BL_PIN, Value);
 }
 
 static void DISP_InitReg(void) {
@@ -411,4 +294,118 @@ static void DISP_InitReg(void) {
 	HAL_Delay(120);
 	DISP_SendCommand(0x29);
 	HAL_Delay(20);
+}
+
+void DISP_Init(SPI_HandleTypeDef *hspi, uint8_t Scan_dir) {
+
+	_hspi = hspi;
+
+    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
+    HAL_GPIO_WritePin(DEV_CS_PIN, 1);
+    HAL_GPIO_WritePin(DEV_RST_PIN, 1);
+    HAL_GPIO_WritePin(DEV_BL_PIN, 1);
+
+    DISP_Reset();
+    DISP_SetAttributes(Scan_dir);
+    DISP_InitReg();
+
+    DISP_SetBackLight(1);
+}
+
+void DISP_Exit(void) {
+
+    HAL_GPIO_WritePin(DEV_DC_PIN, 0);
+    HAL_GPIO_WritePin(DEV_CS_PIN, 0);
+    HAL_GPIO_WritePin(DEV_RST_PIN, 0);
+    HAL_GPIO_WritePin(DEV_BL_PIN, 0);
+}
+
+/********************************************************************************
+function:	Sets the start position and size of the display area
+parameter:
+		Xstart 	:   X direction Start coordinates
+		Ystart  :   Y direction Start coordinates
+		Xend    :   X direction end coordinates
+		Yend    :   Y direction end coordinates
+********************************************************************************/
+void DISP_SetWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend) {
+
+    //set the X coordinates
+    DISP_SendCommand(0x2A);
+    DISP_SendData_8Bit(0x00);
+    DISP_SendData_8Bit(Xstart);
+    DISP_SendData_8Bit(0x00);
+    DISP_SendData_8Bit(Xend);
+
+    //set the Y coordinates
+    DISP_SendCommand(0x2B);
+    DISP_SendData_8Bit(0x00);
+    DISP_SendData_8Bit(Ystart);
+    DISP_SendData_8Bit(0x00);
+    DISP_SendData_8Bit(Yend);
+
+    DISP_SendCommand(0X2C);
+}
+
+void DISP_Clear(uint16_t Color) {
+
+    uint16_t i,j;
+    DISP_SetWindows(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1);
+
+    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
+	for(i = 0; i < DISP_WIDTH; i++){
+		for(j = 0; j < DISP_HEIGHT; j++){
+			DISP_SPI_send(Color>>8);
+			DISP_SPI_send(Color);
+		}
+	 }
+}
+
+void DISP_Display(uint16_t *Image) {
+
+    uint16_t i,j;
+    DISP_SetWindows(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1);
+    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
+    for(i = 0; i < DISP_WIDTH; i++){
+      for(j = 0; j < DISP_HEIGHT; j++){
+        DISP_SPI_send((*Image+i*DISP_WIDTH+j)>>8);
+        DISP_SPI_send(*(Image+i*DISP_WIDTH+j));
+      }
+    }
+}
+
+void DISP_DisplayWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t *Image) {
+
+    // display
+    uint32_t Addr = 0;
+
+    uint16_t i,j;
+    DISP_SetWindows(Xstart, Ystart, Xend-1 , Yend-1);
+    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
+    for (i = Ystart; i < Yend - 1; i++) {
+        Addr = Xstart + i * DISP_WIDTH ;
+        for(j=Xstart;j<Xend-1;j++){
+          DISP_SPI_send(*(Image+Addr+j)>>8);
+          DISP_SPI_send(*(Image+Addr+j));
+        }
+    }
+}
+
+/******************************************************************************
+function: Draw a point
+parameter	:
+	    X	: 	Set the X coordinate
+	    Y	:	Set the Y coordinate
+	  Color :	Set the color
+******************************************************************************/
+void DISP_DrawPaint(uint16_t x, uint16_t y, uint16_t Color)
+{
+	DISP_SetWindows(x,y,x,y);
+	DISP_SendData_16Bit(Color);
+}
+
+
+void DISP_SetBackLight(uint8_t Value) {
+
+	HAL_GPIO_WritePin(DEV_BL_PIN, Value);
 }
