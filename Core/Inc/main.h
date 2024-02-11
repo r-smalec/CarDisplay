@@ -60,34 +60,32 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOA
-#define UART_PC_TX_Pin GPIO_PIN_2
-#define UART_PC_TX_GPIO_Port GPIOA
-#define UART_PC_RX_Pin GPIO_PIN_3
-#define UART_PC_RX_GPIO_Port GPIOA
-#define DISP_CS_Pin GPIO_PIN_4
-#define DISP_CS_GPIO_Port GPIOA
-#define DISP_CLK_Pin GPIO_PIN_5
-#define DISP_CLK_GPIO_Port GPIOA
-#define DISP_DIN_Pin GPIO_PIN_7
-#define DISP_DIN_GPIO_Port GPIOA
-#define DISP_RST_Pin GPIO_PIN_0
-#define DISP_RST_GPIO_Port GPIOB
-#define SPEED_SENS_Pin GPIO_PIN_8
-#define SPEED_SENS_GPIO_Port GPIOA
-#define UART_ECU_TX_Pin GPIO_PIN_9
-#define UART_ECU_TX_GPIO_Port GPIOA
-#define UART_ECU_RX_Pin GPIO_PIN_10
-#define UART_ECU_RX_GPIO_Port GPIOA
-#define DISP_BL_Pin GPIO_PIN_12
-#define DISP_BL_GPIO_Port GPIOA
+#define A7_UART_PC_TX_Pin GPIO_PIN_2
+#define A7_UART_PC_TX_GPIO_Port GPIOA
+#define A2_UART_PC_RX_Pin GPIO_PIN_3
+#define A2_UART_PC_RX_GPIO_Port GPIOA
+#define D3_DISP_RST_Pin GPIO_PIN_0
+#define D3_DISP_RST_GPIO_Port GPIOB
+#define D6_DISP_CS_Pin GPIO_PIN_1
+#define D6_DISP_CS_GPIO_Port GPIOB
+#define D9_SPEED_SENS_Pin GPIO_PIN_8
+#define D9_SPEED_SENS_GPIO_Port GPIOA
+#define D1_UART_ECU_TX_Pin GPIO_PIN_9
+#define D1_UART_ECU_TX_GPIO_Port GPIOA
+#define D0_UART_ECU_RX_Pin GPIO_PIN_10
+#define D0_UART_ECU_RX_GPIO_Port GPIOA
+#define D2_DISP_BL_Pin GPIO_PIN_12
+#define D2_DISP_BL_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
-#define SW_Pin GPIO_PIN_3
-#define SW_GPIO_Port GPIOB
-#define DISP_DC_Pin GPIO_PIN_7
-#define DISP_DC_GPIO_Port GPIOB
+#define D13_DISP_CLK_Pin GPIO_PIN_3
+#define D13_DISP_CLK_GPIO_Port GPIOB
+#define D11_DISP_DIN_Pin GPIO_PIN_5
+#define D11_DISP_DIN_GPIO_Port GPIOB
+#define D4_DISP_DC_Pin GPIO_PIN_7
+#define D4_DISP_DC_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

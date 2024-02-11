@@ -2,43 +2,44 @@
 
 static void DISP_Reset(void) {
 
-	HAL_GPIO_WritePin(DEV_RST_PIN, 1);
+	HAL_GPIO_WritePin(DISP_RST_PIN, GPIO_PIN_SET);
     HAL_Delay(100);
-    HAL_GPIO_WritePin(DEV_RST_PIN, 0);
+    HAL_GPIO_WritePin(DISP_RST_PIN, GPIO_PIN_RESET);
     HAL_Delay(100);
-    HAL_GPIO_WritePin(DEV_RST_PIN, 1);
+    HAL_GPIO_WritePin(DISP_RST_PIN, GPIO_PIN_SET);
     HAL_Delay(100);
 }
 
 static void DISP_SPI_send(uint8_t data) {
-	HAL_SPI_Transmit(_hspi, (uint8_t*)&data, sizeof(uint8_t), 100);
+	HAL_SPI_Transmit(&hspi3, &data, 1, 100);
+//	HAL_Delay(200);
 }
 
-static void DISP_SendCommand(uint8_t reg) {
+void DISP_SendCommand(uint8_t reg) {
 
-	HAL_GPIO_WritePin(DEV_DC_PIN, 0);
-	HAL_GPIO_WritePin(DEV_CS_PIN, 0);
+	HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_RESET);
 	DISP_SPI_send(reg);
-    // HAL_GPIO_WritePin(DEV_CS_PIN, 1);
+    // HAL_GPIO_WritePin(DISP_CS_PIN, 1);
 }
 
-static void DISP_SendData_8Bit(uint8_t data) {
-	HAL_GPIO_WritePin(DEV_DC_PIN, 1);
-	HAL_GPIO_WritePin(DEV_CS_PIN, 0);
+void DISP_SendData_8Bit(uint8_t data) {
+	HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_RESET);
 	DISP_SPI_send(data);
-    HAL_GPIO_WritePin(DEV_CS_PIN, 1);
+    HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_SET);
 }
 
-static void DISP_SendData_16Bit(uint16_t data) {
+void DISP_SendData_16Bit(uint16_t data) {
 
 	uint8_t data_h = (uint8_t)(data >> 8);
 	uint8_t data_l = (uint8_t) data;
 
-	HAL_GPIO_WritePin(DEV_DC_PIN, 1);
-	HAL_GPIO_WritePin(DEV_CS_PIN, 0);
+	HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_RESET);
 	DISP_SPI_send(data_h);
 	DISP_SPI_send(data_l);
-    HAL_GPIO_WritePin(DEV_CS_PIN, 1);
+    HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_SET);
 }
 
 static void DISP_SetAttributes(uint8_t Scan_dir) {
@@ -296,14 +297,12 @@ static void DISP_InitReg(void) {
 	HAL_Delay(20);
 }
 
-void DISP_Init(SPI_HandleTypeDef *hspi, uint8_t Scan_dir) {
+void DISP_Init(uint8_t Scan_dir) {
 
-	_hspi = hspi;
-
-    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
-    HAL_GPIO_WritePin(DEV_CS_PIN, 1);
-    HAL_GPIO_WritePin(DEV_RST_PIN, 1);
-    HAL_GPIO_WritePin(DEV_BL_PIN, 1);
+    HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(DISP_RST_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(DISP_BL_PIN, GPIO_PIN_SET);
 
     DISP_Reset();
     DISP_SetAttributes(Scan_dir);
@@ -314,10 +313,10 @@ void DISP_Init(SPI_HandleTypeDef *hspi, uint8_t Scan_dir) {
 
 void DISP_Exit(void) {
 
-    HAL_GPIO_WritePin(DEV_DC_PIN, 0);
-    HAL_GPIO_WritePin(DEV_CS_PIN, 0);
-    HAL_GPIO_WritePin(DEV_RST_PIN, 0);
-    HAL_GPIO_WritePin(DEV_BL_PIN, 0);
+    HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(DISP_RST_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(DISP_BL_PIN, GPIO_PIN_RESET);
 }
 
 /********************************************************************************
@@ -328,7 +327,7 @@ parameter:
 		Xend    :   X direction end coordinates
 		Yend    :   Y direction end coordinates
 ********************************************************************************/
-void DISP_SetWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend) {
+void DISP_SetCursor(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend) {
 
     //set the X coordinates
     DISP_SendCommand(0x2A);
@@ -350,9 +349,9 @@ void DISP_SetWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Y
 void DISP_Clear(uint16_t Color) {
 
     uint16_t i,j;
-    DISP_SetWindows(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1);
+    DISP_SetCursor(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1);
 
-    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
+    HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
 	for(i = 0; i < DISP_WIDTH; i++){
 		for(j = 0; j < DISP_HEIGHT; j++){
 			DISP_SPI_send(Color>>8);
@@ -364,8 +363,8 @@ void DISP_Clear(uint16_t Color) {
 void DISP_Display(uint16_t *Image) {
 
     uint16_t i,j;
-    DISP_SetWindows(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1);
-    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
+    DISP_SetCursor(0, 0, DISP_WIDTH-1, DISP_HEIGHT-1);
+    HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
     for(i = 0; i < DISP_WIDTH; i++){
       for(j = 0; j < DISP_HEIGHT; j++){
         DISP_SPI_send((*Image+i*DISP_WIDTH+j)>>8);
@@ -380,8 +379,8 @@ void DISP_DisplayWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16
     uint32_t Addr = 0;
 
     uint16_t i,j;
-    DISP_SetWindows(Xstart, Ystart, Xend-1 , Yend-1);
-    HAL_GPIO_WritePin(DEV_DC_PIN, 1);
+    DISP_SetCursor(Xstart, Ystart, Xend-1 , Yend-1);
+    HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
     for (i = Ystart; i < Yend - 1; i++) {
         Addr = Xstart + i * DISP_WIDTH ;
         for(j=Xstart;j<Xend-1;j++){
@@ -400,12 +399,12 @@ parameter	:
 ******************************************************************************/
 void DISP_DrawPaint(uint16_t x, uint16_t y, uint16_t Color)
 {
-	DISP_SetWindows(x,y,x,y);
+	DISP_SetCursor(x,y,x,y);
 	DISP_SendData_16Bit(Color);
 }
 
 
 void DISP_SetBackLight(uint8_t Value) {
 
-	HAL_GPIO_WritePin(DEV_BL_PIN, Value);
+	HAL_GPIO_WritePin(DISP_BL_PIN, Value);
 }

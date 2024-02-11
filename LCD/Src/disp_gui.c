@@ -150,7 +150,8 @@ void Paint_SetPixel(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color)
     }
     
    // UDOUBLE Addr = X / 8 + Y * Paint.WidthByte;
-		DISPLAY(X,Y, Color);
+		//DISPLAY(X,Y, Color);
+    DISP_DrawPaint(X, Y, Color);
 }
 
 /******************************************************************************
@@ -160,7 +161,12 @@ parameter:
 ******************************************************************************/
 void Paint_Clear(uint16_t Color)
 {	
-	CLEAR(Color);
+	  DISP_SetCursor(0, 0, Paint.WidthByte , Paint.HeightByte);
+	  for (uint16_t Y = 0; Y < Paint.HeightByte; Y++) {
+	    for (uint16_t X = 0; X < Paint.WidthByte; X++ ) {//8 pixel =  1 byte
+	    	DISP_SendData_16Bit(Color);
+	    }
+	  }
 }
 
 /******************************************************************************
@@ -503,7 +509,7 @@ void Paint_DrawNum(uint16_t Xpoint, uint16_t Ypoint, int32_t Nummber,
     }
     
     //show
-    Paint_DrawString_EN(Xpoint, Ypoint, (const char*)pStr, Font, Color_Background, Color_Foreground);
+    Paint_DrawString(Xpoint, Ypoint, (const char*)pStr, Font, Color_Background, Color_Foreground);
 }
 
 /******************************************************************************

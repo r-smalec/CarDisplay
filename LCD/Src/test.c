@@ -5,9 +5,8 @@
 
 void DISP_test() {
 
-	SPI_HandleTypeDef hspi1;
 	printf("DISP_test Demo\r\n");
-	DISP_Init(&hspi1, VERTICAL);
+	DISP_Init(VERTICAL);
   
 	printf("DISP_ Init and Clear...\r\n");
  	DISP_Clear(BLACK);
