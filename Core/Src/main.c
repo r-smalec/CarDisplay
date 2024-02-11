@@ -105,14 +105,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 	DISP_Init(VERTICAL);
-	Paint_NewImage(280, 280, 0, BLACK);
-	Paint_Clear(BLACK);
-//	Paint_DrawCircle(120, 120, 120, BRRED, DOT_PIXEL_2X2, DRAW_FILL_EMPTY);
-
-//	Paint_DrawString(10, 123, "D",&Font24,  BLACK, LGRAYBLUE);
-//	Paint_DrawString(30, 123, "U",&Font24,  BLACK, LBBLUE);
-//	Paint_DrawString(60, 123, "D",&Font24,  BLACK, MAGENTA);
-//	Paint_DrawString(80, 123, "A",&Font24,  BLACK, GRED);
+	Paint_NewImage(DISP_WIDTH, DISP_HEIGHT, 0, BLACK);
+	DISP_Clear(BLACK);
 
 	Paint_DrawImage(gImage_samurai_logo_q1, 30, 30, 90, 90);
 	Paint_DrawImage(gImage_samurai_logo_q3, 30, 120, 90, 90);
@@ -374,24 +368,24 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, D3_DISP_RST_Pin|D6_DISP_CS_Pin|D4_DISP_DC_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, A3_DISP_CS_Pin|D2_DISP_BL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(D2_DISP_BL_GPIO_Port, D2_DISP_BL_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, D3_DISP_RST_Pin|D4_DISP_DC_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : D3_DISP_RST_Pin D6_DISP_CS_Pin D4_DISP_DC_Pin */
-  GPIO_InitStruct.Pin = D3_DISP_RST_Pin|D6_DISP_CS_Pin|D4_DISP_DC_Pin;
+  /*Configure GPIO pins : A3_DISP_CS_Pin D2_DISP_BL_Pin */
+  GPIO_InitStruct.Pin = A3_DISP_CS_Pin|D2_DISP_BL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : D3_DISP_RST_Pin D4_DISP_DC_Pin */
+  GPIO_InitStruct.Pin = D3_DISP_RST_Pin|D4_DISP_DC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : D2_DISP_BL_Pin */
-  GPIO_InitStruct.Pin = D2_DISP_BL_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(D2_DISP_BL_GPIO_Port, &GPIO_InitStruct);
 
 }
 

@@ -22,8 +22,7 @@ void Paint_NewImage(uint16_t Width, uint16_t Height, uint16_t Rotate, uint16_t C
     Paint.HeightMemory = Height;
     Paint.Color = Color;    
     Paint.WidthByte = Width;
-    Paint.HeightByte = Height;    
-    printf("WidthByte = %d, HeightByte = %d\r\n", Paint.WidthByte, Paint.HeightByte);
+    Paint.HeightByte = Height;
    
     Paint.Rotate = Rotate;
     Paint.Mirror = MIRROR_NONE;
@@ -35,24 +34,6 @@ void Paint_NewImage(uint16_t Width, uint16_t Height, uint16_t Rotate, uint16_t C
         Paint.Width = Height;
         Paint.Height = Width;
     }
-}
-/******************************************************************************
-function:	Select Clear Funtion
-parameter:
-      Clear :   Pointer to Clear funtion 
-******************************************************************************/
-void Paint_SetClearFuntion(void (*Clear)(uint16_t))
-{
-  CLEAR=Clear;
-}
-/******************************************************************************
-function:	Select DisplayF untion
-parameter:
-      Display :   Pointer to display funtion 
-******************************************************************************/
-void Paint_SetDisplayFuntion(void (*Display)(uint16_t,uint16_t,uint16_t))
-{
-  DISPLAY=Display;
 }
 
 /******************************************************************************
@@ -152,21 +133,6 @@ void Paint_SetPixel(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color)
    // UDOUBLE Addr = X / 8 + Y * Paint.WidthByte;
 		//DISPLAY(X,Y, Color);
     DISP_DrawPaint(X, Y, Color);
-}
-
-/******************************************************************************
-function:	Clear the color of the picture
-parameter:
-    Color   :   Painted colors
-******************************************************************************/
-void Paint_Clear(uint16_t Color)
-{	
-	  DISP_SetCursor(0, 0, Paint.WidthByte , Paint.HeightByte);
-	  for (uint16_t Y = 0; Y < Paint.HeightByte; Y++) {
-	    for (uint16_t X = 0; X < Paint.WidthByte; X++ ) {//8 pixel =  1 byte
-	    	DISP_SendData_16Bit(Color);
-	    }
-	  }
 }
 
 /******************************************************************************
@@ -560,5 +526,4 @@ void Paint_DrawImage(const unsigned char *image, uint16_t xStart, uint16_t yStar
 				//i*2              	   X offset
 			}
 		}
-      
 }

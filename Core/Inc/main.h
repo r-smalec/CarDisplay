@@ -64,10 +64,10 @@ void Error_Handler(void);
 #define A7_UART_PC_TX_GPIO_Port GPIOA
 #define A2_UART_PC_RX_Pin GPIO_PIN_3
 #define A2_UART_PC_RX_GPIO_Port GPIOA
+#define A3_DISP_CS_Pin GPIO_PIN_4
+#define A3_DISP_CS_GPIO_Port GPIOA
 #define D3_DISP_RST_Pin GPIO_PIN_0
 #define D3_DISP_RST_GPIO_Port GPIOB
-#define D6_DISP_CS_Pin GPIO_PIN_1
-#define D6_DISP_CS_GPIO_Port GPIOB
 #define D9_SPEED_SENS_Pin GPIO_PIN_8
 #define D9_SPEED_SENS_GPIO_Port GPIOA
 #define D1_UART_ECU_TX_Pin GPIO_PIN_9

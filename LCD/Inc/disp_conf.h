@@ -9,7 +9,7 @@
 
 #define DISP_RST_PIN     	D3_DISP_RST_GPIO_Port, D3_DISP_RST_Pin
 #define DISP_DC_PIN      	D4_DISP_DC_GPIO_Port, D4_DISP_DC_Pin
-#define DISP_CS_PIN			D6_DISP_CS_GPIO_Port, D6_DISP_CS_Pin
+#define DISP_CS_PIN			A3_DISP_CS_GPIO_Port, A3_DISP_CS_Pin
 #define DISP_BL_PIN			D2_DISP_BL_GPIO_Port, D2_DISP_BL_Pin
 
 extern SPI_HandleTypeDef hspi3;

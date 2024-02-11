@@ -193,13 +193,10 @@ extern PAINT_TIME sPaint_time;
 //init and Clear
 void Paint_NewImage(uint16_t Width, uint16_t Height, uint16_t Rotate, uint16_t Color);
 void Paint_SelectImage(uint8_t *image);
-void Paint_SetClearFuntion(void (*Clear)(uint16_t));
-void Paint_SetDisplayFuntion(void (*Display)(uint16_t,uint16_t,uint16_t));
 void Paint_SetRotate(uint16_t Rotate);
 void Paint_SetMirroring(uint8_t mirror);
 void Paint_SetPixel(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color);
 
-void Paint_Clear(uint16_t Color);
 void Paint_ClearWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color);
 
 

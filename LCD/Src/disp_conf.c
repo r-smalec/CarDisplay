@@ -12,20 +12,18 @@ static void DISP_Reset(void) {
 
 static void DISP_SPI_send(uint8_t data) {
 	HAL_SPI_Transmit(&hspi3, &data, 1, 100);
-//	HAL_Delay(200);
 }
 
 void DISP_SendCommand(uint8_t reg) {
 
-	HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_RESET);
 	DISP_SPI_send(reg);
-    // HAL_GPIO_WritePin(DISP_CS_PIN, 1);
 }
 
 void DISP_SendData_8Bit(uint8_t data) {
-	HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
 	DISP_SPI_send(data);
     HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_SET);
 }
@@ -35,8 +33,8 @@ void DISP_SendData_16Bit(uint16_t data) {
 	uint8_t data_h = (uint8_t)(data >> 8);
 	uint8_t data_l = (uint8_t) data;
 
-	HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(DISP_DC_PIN, GPIO_PIN_SET);
 	DISP_SPI_send(data_h);
 	DISP_SPI_send(data_l);
     HAL_GPIO_WritePin(DISP_CS_PIN, GPIO_PIN_SET);
