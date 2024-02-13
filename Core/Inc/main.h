@@ -99,7 +99,24 @@ typedef struct {
 	uint8_t oil_temp;
 	int16_t CLT;
 	float lambda;
-} ecu_val;
+} ecu;
+
+typedef struct {
+	uint16_t gearRatio[6];
+	uint16_t revGear[6];
+	uint8_t actGear;
+} gearbox;
+
+typedef enum {
+	LOGO,
+	PARAM,
+	GEARBOX,
+	SCREEN_NO
+} screen;
+
+typedef struct {
+	screen screenNo;
+} dev_state;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

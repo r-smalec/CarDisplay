@@ -15,8 +15,6 @@ void DISP_test() {
 	DISP_NewImage(DISP_WIDTH,DISP_HEIGHT, 0, BLACK);
 	
 	printf("Set Clear and Display Funtion\r\n");
-	DISP_SetClearFuntion(DISP_Clear);
-	DISP_SetDisplayFuntion(DISP_DrawPaint);
 
 	printf("DISP_Clear\r\n");
 	DISP_Clear(BLACK);

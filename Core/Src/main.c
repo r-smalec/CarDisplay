@@ -67,7 +67,13 @@ static void MX_SPI3_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-ecu_val ecuVal;
+ecu ecuVal;
+dev_state devState;
+gearbox gearboxVal;
+
+void logoScreenDisplay();
+void paramScreenDisplay();
+void gearboxScreenDisplay();
 /* USER CODE END 0 */
 
 /**
@@ -106,28 +112,14 @@ int main(void)
 
 	DISP_Init(VERTICAL);
 	DISP_NewImage(DISP_WIDTH, DISP_HEIGHT, 0, BLACK);
-	DISP_Clear(BLACK);
-
-	DISP_DrawImage(gImage_samurai_logo_q1, 30, 30, 90, 90);
-	DISP_DrawImage(gImage_samurai_logo_q3, 30, 120, 90, 90);
-	DISP_DrawImage(gImage_samurai_logo_q2, 120, 30, 90, 90);
-	DISP_DrawImage(gImage_samurai_logo_q4, 120, 120, 90, 90);
+	logoScreenDisplay();
 
 	// Waiting for pressing the switch
 	while(HAL_GPIO_ReadPin(SWITCH_PIN));
 	HAL_Delay(100);
-	DISP_Clear(BLACK);
-	DISP_DrawString(65, 40, "WATER oC", &Font20, BLACK, BRRED);
-	DISP_DrawLine(20, 60, 220, 60, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
-	DISP_DrawLine(120, 60, 120, 120, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
-	DISP_DrawString(25, 100, "OIL oC", &Font20, BLACK, BRRED);
-	DISP_DrawString(130, 100, "OIL bar", &Font20, BLACK, BRRED);
-	DISP_DrawLine(5, 120, 235, 120, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
-	DISP_DrawLine(120, 120, 120, 180, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
-	DISP_DrawString(25, 160, "BATT V", &Font20, BLACK, BRRED);
-	DISP_DrawString(130, 160, "LAMBDA", &Font20, BLACK, BRRED);
-	DISP_DrawLine(20, 180, 220, 180, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
-	DISP_DrawString(75, 182, "IAT oC", &Font20, BLACK, BRRED);
+
+	//paramScreenDisplay();
+	gearboxScreenDisplay();
 
 	ecuVal.IAT = 40;
 	ecuVal.batt_v = 12.6;
@@ -135,6 +127,20 @@ int main(void)
 	ecuVal.oil_temp = 90;
 	ecuVal.CLT = 90;
 	ecuVal.lambda = 12.6;
+
+	gearboxVal.actGear = 3;
+
+	gearboxVal.gearRatio[0] = 1;
+	gearboxVal.gearRatio[1] = 442;
+	gearboxVal.gearRatio[2] = 230;
+	gearboxVal.gearRatio[3] = 167;
+	gearboxVal.gearRatio[4] = 119;
+	gearboxVal.gearRatio[5] = 100;
+
+	gearboxVal.revGear[1] = 5000;
+	for(int i = 2; i <= 5 ; i++) {
+		gearboxVal.revGear[i] = gearboxVal.revGear[i-1] * gearboxVal.gearRatio[i] / gearboxVal.gearRatio[i-1];
+	}
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -144,24 +150,32 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  DISP_DrawNum(105, 15, (int32_t)ecuVal.CLT, &Font24, BRRED, BLACK);
-	  ecuVal.CLT++;
-	  DISP_DrawNum(40, 70, (int32_t)ecuVal.oil_temp, &Font24, BRRED, BLACK);
-	  DISP_DrawNum(160, 70, (int32_t)ecuVal.oil_bar, &Font24, BRRED, BLACK);
-	  ecuVal.oil_bar++;
-	  ecuVal.oil_temp++;
-	  DISP_DrawNum(40, 130, (int32_t)ecuVal.batt_v, &Font24, BRRED, BLACK);
-	  DISP_DrawNum(160, 130, (int32_t)ecuVal.lambda, &Font24, BRRED, BLACK);
-	  ecuVal.batt_v++;
-	  ecuVal.lambda++;
-	  DISP_DrawNum(105, 207, (int32_t)ecuVal.IAT, &Font24, BRRED, BLACK);
-	  ecuVal.IAT++;
+	if(devState.screenNo == PARAM) {
+		DISP_DrawNum(105, 15, (int32_t)ecuVal.CLT, &Font24, BRRED, BLACK);
+		DISP_DrawNum(40, 70, (int32_t)ecuVal.oil_temp, &Font24, BRRED, BLACK);
+		DISP_DrawNum(160, 70, (int32_t)ecuVal.oil_bar, &Font24, BRRED, BLACK);
+		DISP_DrawNum(40, 130, (int32_t)ecuVal.batt_v, &Font24, BRRED, BLACK);
+		DISP_DrawNum(160, 130, (int32_t)ecuVal.lambda, &Font24, BRRED, BLACK);
+		DISP_DrawNum(105, 207, (int32_t)ecuVal.IAT, &Font24, BRRED, BLACK);
+		ecuVal.oil_bar++;
+		ecuVal.oil_temp++;
+		ecuVal.batt_v++;
+		ecuVal.lambda++;
+		ecuVal.CLT++;
+		ecuVal.IAT++;
+	} else if (devState.screenNo == GEARBOX) {
+		DISP_DrawNum(130, 90,  gearboxVal.revGear[1], &Font24, ((gearboxVal.actGear == 1) ? BRRED : BLACK), ((gearboxVal.actGear == 1) ? BLACK : BRRED));
+		DISP_DrawNum(130, 115, gearboxVal.revGear[2], &Font24, ((gearboxVal.actGear == 2) ? BRRED : BLACK), ((gearboxVal.actGear == 2) ? BLACK : BRRED));
+		DISP_DrawNum(130, 140, gearboxVal.revGear[3], &Font24, ((gearboxVal.actGear == 3) ? BRRED : BLACK), ((gearboxVal.actGear == 3) ? BLACK : BRRED));
+		DISP_DrawNum(130, 165, gearboxVal.revGear[4], &Font24, ((gearboxVal.actGear == 4) ? BRRED : BLACK), ((gearboxVal.actGear == 4) ? BLACK : BRRED));
+		DISP_DrawNum(130, 190, gearboxVal.revGear[5], &Font24, ((gearboxVal.actGear == 5) ? BRRED : BLACK), ((gearboxVal.actGear == 5) ? BLACK : BRRED));
+	}
 
-	  HAL_UART_Transmit(&huart2, "d", 5, 100);
-	  HAL_UART_Transmit(&huart2, "\n", 1, 100);
-	  HAL_UART_Transmit(&huart1, "123aaa", 5, 100);
-//	  HAL_SPI_Transmit(&hspi3, 0x5A, 8, 100);
-	  HAL_Delay(1000);
+
+	HAL_UART_Transmit(&huart2, "d", 5, 100);
+	HAL_UART_Transmit(&huart2, "\n", 1, 100);
+	HAL_UART_Transmit(&huart1, "123aaa", 5, 100);
+	HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -432,6 +446,48 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void logoScreenDisplay() {
+	devState.screenNo = LOGO;
+	DISP_Clear(BLACK);
+
+	DISP_DrawImage(gImage_samurai_logo_q1, 30, 30, 90, 90);
+	DISP_DrawImage(gImage_samurai_logo_q3, 30, 120, 90, 90);
+	DISP_DrawImage(gImage_samurai_logo_q2, 120, 30, 90, 90);
+	DISP_DrawImage(gImage_samurai_logo_q4, 120, 120, 90, 90);
+}
+
+void paramScreenDisplay() {
+	devState.screenNo = PARAM;
+	DISP_Clear(BLACK);
+
+	DISP_DrawString(65, 40, "WATER oC", &Font20, BLACK, BRRED);
+	DISP_DrawLine(20, 60, 220, 60, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawLine(120, 60, 120, 120, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawString(25, 100, "OIL oC", &Font20, BLACK, BRRED);
+	DISP_DrawString(130, 100, "OIL bar", &Font20, BLACK, BRRED);
+	DISP_DrawLine(5, 120, 235, 120, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawLine(120, 120, 120, 180, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawString(25, 160, "BATT V", &Font20, BLACK, BRRED);
+	DISP_DrawString(130, 160, "LAMBDA", &Font20, BLACK, BRRED);
+	DISP_DrawLine(20, 180, 220, 180, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawString(75, 182, "IAT oC", &Font20, BLACK, BRRED);
+}
+
+void gearboxScreenDisplay() {
+	devState.screenNo = GEARBOX;
+	DISP_Clear(BLACK);
+
+	DISP_DrawString(55, 40, "SPEED km/h", &Font20, BLACK, BRRED);
+	DISP_DrawLine(20, 60, 220, 60, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawLine(120, 60, 120, 220, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawString(40, 70, "GEAR", &Font20, BLACK, BRRED);
+	DISP_DrawString(130, 70, "RPM", &Font20, BLACK, BRRED);
+	DISP_DrawString(60, 90, "1", &Font20, BLACK, BRRED);
+	DISP_DrawString(60, 115, "2", &Font20, BLACK, BRRED);
+	DISP_DrawString(60, 140, "3", &Font20, BLACK, BRRED);
+	DISP_DrawString(60, 165, "4", &Font20, BLACK, BRRED);
+	DISP_DrawString(60, 190, "5", &Font20, BLACK, BRRED);
+}
 
 /* USER CODE END 4 */
 
