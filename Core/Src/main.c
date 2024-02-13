@@ -67,7 +67,7 @@ static void MX_SPI3_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+ecu_val ecuVal;
 /* USER CODE END 0 */
 
 /**
@@ -105,13 +105,36 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 	DISP_Init(VERTICAL);
-	Paint_NewImage(DISP_WIDTH, DISP_HEIGHT, 0, BLACK);
+	DISP_NewImage(DISP_WIDTH, DISP_HEIGHT, 0, BLACK);
 	DISP_Clear(BLACK);
 
-	Paint_DrawImage(gImage_samurai_logo_q1, 30, 30, 90, 90);
-	Paint_DrawImage(gImage_samurai_logo_q3, 30, 120, 90, 90);
-	Paint_DrawImage(gImage_samurai_logo_q2, 120, 30, 90, 90);
-	Paint_DrawImage(gImage_samurai_logo_q4, 120, 120, 90, 90);
+	DISP_DrawImage(gImage_samurai_logo_q1, 30, 30, 90, 90);
+	DISP_DrawImage(gImage_samurai_logo_q3, 30, 120, 90, 90);
+	DISP_DrawImage(gImage_samurai_logo_q2, 120, 30, 90, 90);
+	DISP_DrawImage(gImage_samurai_logo_q4, 120, 120, 90, 90);
+
+	// Waiting for pressing the switch
+	while(HAL_GPIO_ReadPin(SWITCH_PIN));
+	HAL_Delay(100);
+	DISP_Clear(BLACK);
+	DISP_DrawString(65, 40, "WATER oC", &Font20, BLACK, BRRED);
+	DISP_DrawLine(20, 60, 220, 60, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawLine(120, 60, 120, 120, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawString(25, 100, "OIL oC", &Font20, BLACK, BRRED);
+	DISP_DrawString(130, 100, "OIL bar", &Font20, BLACK, BRRED);
+	DISP_DrawLine(5, 120, 235, 120, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawLine(120, 120, 120, 180, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawString(25, 160, "BATT V", &Font20, BLACK, BRRED);
+	DISP_DrawString(130, 160, "LAMBDA", &Font20, BLACK, BRRED);
+	DISP_DrawLine(20, 180, 220, 180, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawString(75, 182, "IAT oC", &Font20, BLACK, BRRED);
+
+	ecuVal.IAT = 40;
+	ecuVal.batt_v = 12.6;
+	ecuVal.oil_bar = 3.5;
+	ecuVal.oil_temp = 90;
+	ecuVal.CLT = 90;
+	ecuVal.lambda = 12.6;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -121,7 +144,20 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  HAL_UART_Transmit(&huart2, "dupek", 5, 100);
+	  DISP_DrawNum(105, 15, (int32_t)ecuVal.CLT, &Font24, BRRED, BLACK);
+	  ecuVal.CLT++;
+	  DISP_DrawNum(40, 70, (int32_t)ecuVal.oil_temp, &Font24, BRRED, BLACK);
+	  DISP_DrawNum(160, 70, (int32_t)ecuVal.oil_bar, &Font24, BRRED, BLACK);
+	  ecuVal.oil_bar++;
+	  ecuVal.oil_temp++;
+	  DISP_DrawNum(40, 130, (int32_t)ecuVal.batt_v, &Font24, BRRED, BLACK);
+	  DISP_DrawNum(160, 130, (int32_t)ecuVal.lambda, &Font24, BRRED, BLACK);
+	  ecuVal.batt_v++;
+	  ecuVal.lambda++;
+	  DISP_DrawNum(105, 207, (int32_t)ecuVal.IAT, &Font24, BRRED, BLACK);
+	  ecuVal.IAT++;
+
+	  HAL_UART_Transmit(&huart2, "d", 5, 100);
 	  HAL_UART_Transmit(&huart2, "\n", 1, 100);
 	  HAL_UART_Transmit(&huart1, "123aaa", 5, 100);
 //	  HAL_SPI_Transmit(&hspi3, 0x5A, 8, 100);
@@ -386,6 +422,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : D12_SWITCH_Pin */
+  GPIO_InitStruct.Pin = D12_SWITCH_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(D12_SWITCH_GPIO_Port, &GPIO_InitStruct);
 
 }
 

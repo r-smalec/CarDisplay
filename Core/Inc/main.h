@@ -82,12 +82,24 @@ void Error_Handler(void);
 #define SWCLK_GPIO_Port GPIOA
 #define D13_DISP_CLK_Pin GPIO_PIN_3
 #define D13_DISP_CLK_GPIO_Port GPIOB
+#define D12_SWITCH_Pin GPIO_PIN_4
+#define D12_SWITCH_GPIO_Port GPIOB
 #define D11_DISP_DIN_Pin GPIO_PIN_5
 #define D11_DISP_DIN_GPIO_Port GPIOB
 #define D4_DISP_DC_Pin GPIO_PIN_7
 #define D4_DISP_DC_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+#define SWITCH_PIN     	D12_SWITCH_GPIO_Port, D12_SWITCH_Pin
 
+typedef struct {
+	uint16_t RPM;
+	int8_t IAT;
+	float batt_v;
+	float oil_bar;
+	uint8_t oil_temp;
+	int16_t CLT;
+	float lambda;
+} ecu_val;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

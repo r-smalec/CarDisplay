@@ -14,29 +14,29 @@
 * -----------------------------------------------------------------------------
 * V3.0(2019-04-18):
 * 1.Change: 
-*    Paint_DrawPoint(..., DOT_STYLE DOT_STYLE)
-* => Paint_DrawPoint(..., DOT_STYLE Dot_Style)
-*    Paint_DrawLine(..., LINE_STYLE Line_Style, DOT_PIXEL Dot_Pixel)
-* => Paint_DrawLine(..., DOT_PIXEL Line_width, LINE_STYLE Line_Style)
-*    Paint_DrawRectangle(..., DRAW_FILL Filled, DOT_PIXEL Dot_Pixel)
-* => Paint_DrawRectangle(..., DOT_PIXEL Line_width, DRAW_FILL Draw_Fill)
-*    Paint_DrawCircle(..., DRAW_FILL Draw_Fill, DOT_PIXEL Dot_Pixel)
-* => Paint_DrawCircle(..., DOT_PIXEL Line_width, DRAW_FILL Draw_Filll)
+*    DISP_DrawPoint(..., DOT_STYLE DOT_STYLE)
+* => DISP_DrawPoint(..., DOT_STYLE Dot_Style)
+*    DISP_DrawLine(..., LINE_STYLE Line_Style, DOT_PIXEL Dot_Pixel)
+* => DISP_DrawLine(..., DOT_PIXEL Line_width, LINE_STYLE Line_Style)
+*    DISP_DrawRectangle(..., DRAW_FILL Filled, DOT_PIXEL Dot_Pixel)
+* => DISP_DrawRectangle(..., DOT_PIXEL Line_width, DRAW_FILL Draw_Fill)
+*    DISP_DrawCircle(..., DRAW_FILL Draw_Fill, DOT_PIXEL Dot_Pixel)
+* => DISP_DrawCircle(..., DOT_PIXEL Line_width, DRAW_FILL Draw_Filll)
 *
 * -----------------------------------------------------------------------------
 * V2.0(2018-11-15):
-* 1.add: Paint_NewImage()
+* 1.add: DISP_NewImage()
 *    Create an image's properties
-* 2.add: Paint_SelectImage()
+* 2.add: DISP_SelectImage()
 *    Select the picture to be drawn
-* 3.add: Paint_SetRotate()
+* 3.add: DISP_SetRotate()
 *    Set the direction of the cache    
-* 4.add: Paint_RotateImage() 
+* 4.add: DISP_RotateImage()
 *    Can flip the picture, Support 0-360 degrees, 
 *    but only 90.180.270 rotation is better
-* 4.add: Paint_SetMirroring() 
+* 4.add: DISP_SetMirroring()
 *    Can Mirroring the picture, horizontal, vertical, origin
-* 5.add: Paint_DrawString_CN() 
+* 5.add: DISP_DrawString_CN()
 *    Can display Chinese(GB1312)   
 *
 * ----------------------------------------------------------------------------- 
@@ -64,8 +64,8 @@
 ******************************************************************************/
 
 
-#ifndef __GUI_PAINT_H
-#define __GUI_PAINT_H
+#ifndef __GUI_DISP_H
+#define __GUI_DISP_H
 
 #include "disp_conf.h"
 #include "fonts.h"
@@ -187,34 +187,29 @@ typedef struct {
     uint8_t  Hour;  //0 - 23
     uint8_t  Min;   //0 - 59
     uint8_t  Sec;   //0 - 59
-} PAINT_TIME;
-extern PAINT_TIME sPaint_time;
+} DISP_TIME;
 
-//init and Clear
-void Paint_NewImage(uint16_t Width, uint16_t Height, uint16_t Rotate, uint16_t Color);
-void Paint_SelectImage(uint8_t *image);
-void Paint_SetRotate(uint16_t Rotate);
-void Paint_SetMirroring(uint8_t mirror);
-void Paint_SetPixel(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color);
+extern DISP_TIME sDISP_time;
 
-void Paint_ClearWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color);
+void DISP_NewImage(uint16_t Width, uint16_t Height, uint16_t Rotate, uint16_t Color);
+void DISP_SelectImage(uint8_t *image);
+void DISP_SetRotate(uint16_t Rotate);
+void DISP_SetMirroring(uint8_t mirror);
+void DISP_SetPixel(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color);
 
+void DISP_ClearWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color);
 
-//Drawing
-void Paint_DrawPoint(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color, DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_FillWay);
-void Paint_DrawLine(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color, DOT_PIXEL Line_width, LINE_STYLE Line_Style);
-void Paint_DrawRectangle(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color, DOT_PIXEL Line_width, DRAW_FILL Filled );
-void Paint_DrawCircle(uint16_t X_Center, uint16_t Y_Center, uint16_t Radius, uint16_t Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill );
+void DISP_DrawPoint(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color, DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_FillWay);
+void DISP_DrawLine(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color, DOT_PIXEL Line_width, LINE_STYLE Line_Style);
+void DISP_DrawRectangle(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color, DOT_PIXEL Line_width, DRAW_FILL Filled );
+void DISP_DrawCircle(uint16_t X_Center, uint16_t Y_Center, uint16_t Radius, uint16_t Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill );
 
-//Display string
-void Paint_DrawChar(uint16_t Xstart, uint16_t Ystart, const char Acsii_Char, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
-void Paint_DrawString(uint16_t Xstart, uint16_t Ystart, const char * pString, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
-void Paint_DrawNum(uint16_t Xpoint, uint16_t Ypoint, int32_t Nummber, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
-void Paint_DrawTime(uint16_t Xstart, uint16_t Ystart, PAINT_TIME *pTime, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
+void DISP_DrawChar(uint16_t Xstart, uint16_t Ystart, const char Acsii_Char, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
+void DISP_DrawString(uint16_t Xstart, uint16_t Ystart, const char * pString, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
+void DISP_DrawNum(uint16_t Xpoint, uint16_t Ypoint, int32_t Nummber, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
+void DISP_DrawTime(uint16_t Xstart, uint16_t Ystart, DISP_TIME *pTime, sFONT* Font, uint16_t Color_Background, uint16_t Color_Foreground);
 
-//pic
-void Paint_DrawImage(const unsigned char *image,uint16_t Startx, uint16_t Starty,uint16_t Endx, uint16_t Endy);
-
+void DISP_DrawImage(const unsigned char *image,uint16_t Startx, uint16_t Starty,uint16_t Endx, uint16_t Endy);
 
 #endif
 
