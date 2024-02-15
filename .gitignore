@@ -1,4 +1,4 @@
-Release/*
-Debug/*
-*.ld
-*.launch
+firmware/Release/*
+firmware/Debug/*
+firmware/*.ld
+firmware/*.launch
