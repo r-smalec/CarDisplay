@@ -3,6 +3,6 @@ firmware/Debug/*
 firmware/*.ld
 firmware/*.launch
 
-pcb/CarDisplay/*-backups
+pcb/CarDisplay/*-backups/*
 pcb/CarDisplay/*.kicad_sch-bak
 pcb/CarDisplay/fp-info-cache
