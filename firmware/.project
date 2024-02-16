@@ -30,11 +30,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>LCD</name>
-			<type>2</type>
-			<location>C:/Users/rsmal/OneDrive/Dokumenty/STM32/CarDisplay/LCD</location>
-		</link>
-	</linkedResources>
 </projectDescription>
