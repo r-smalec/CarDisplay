@@ -1,0 +1,14 @@
+main.c:89:5:main	16	static
+main.c:208:6:SystemClock_Config	184	static
+main.c:272:13:MX_SPI3_Init	8	static
+main.c:312:13:MX_TIM2_Init	40	static
+main.c:357:13:MX_USART1_UART_Init	8	static
+main.c:392:13:MX_USART2_UART_Init	8	static
+main.c:427:13:MX_GPIO_Init	40	static
+main.c:484:6:HAL_GPIO_EXTI_Callback	16	static
+main.c:496:6:HAL_TIM_PeriodElapsedCallback	24	static
+main.c:505:6:logoScreenDisplay	16	static
+main.c:515:6:paramScreenDisplay	24	static
+main.c:532:6:gearboxScreenDisplay	24	static
+main.c:548:6:fuelConsScreenDisplay	16	static
+main.c:560:6:Error_Handler	4	static

@@ -1,0 +1,15 @@
+disp_conf.c:3:13:DISP_Reset	8	static
+disp_conf.c:13:13:DISP_SPI_send	16	static
+disp_conf.c:17:6:DISP_SendCommand	16	static
+disp_conf.c:24:6:DISP_SendData_8Bit	16	static
+disp_conf.c:31:6:DISP_SendData_16Bit	24	static
+disp_conf.c:43:13:DISP_SetAttributes	24	static
+disp_conf.c:60:13:DISP_InitReg	8	static
+disp_conf.c:298:6:DISP_Init	16	static
+disp_conf.c:312:6:DISP_Exit	8	static
+disp_conf.c:328:6:DISP_SetCursor	24	static
+disp_conf.c:347:6:DISP_Clear	24	static
+disp_conf.c:361:6:DISP_Display	24	static
+disp_conf.c:374:6:DISP_DisplayWindows	32	static
+disp_conf.c:398:6:DISP_DrawPaint	16	static
+disp_conf.c:405:6:DISP_SetBackLight	16	static

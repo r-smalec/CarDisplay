@@ -1,0 +1,14 @@
+disp_gui.c:19:6:DISP_NewImage	16	static
+disp_gui.c:44:6:DISP_SetRotate	16	static
+disp_gui.c:60:6:DISP_SetMirroring	16	static
+disp_gui.c:80:6:DISP_SetPixel	24	static
+disp_gui.c:146:6:DISP_ClearWindows	32	static
+disp_gui.c:164:6:DISP_DrawPoint	32	static
+disp_gui.c:200:6:DISP_DrawLine	64	static
+disp_gui.c:257:6:DISP_DrawRectangle	48	static
+disp_gui.c:289:6:DISP_DrawCircle	40	static
+disp_gui.c:358:6:DISP_DrawChar	40	static
+disp_gui.c:407:6:DISP_DrawString	40	static
+disp_gui.c:451:6:DISP_DrawNum	560	static
+disp_gui.c:490:6:DISP_DrawTime	48	static
+disp_gui.c:517:6:DISP_DrawImage	40	static
