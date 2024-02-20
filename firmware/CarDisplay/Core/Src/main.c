@@ -68,7 +68,7 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-//#define DISP_ACTIVE
+#define DISP_ACTIVE
 
 ecu ecuVal;
 dev_state devState;
@@ -115,6 +115,7 @@ int main(void)
   MX_SPI3_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  	devState.switchActv = 0;
 
 #ifdef DISP_ACTIVE
 	DISP_Init(VERTICAL);
@@ -125,8 +126,8 @@ int main(void)
 	while(HAL_GPIO_ReadPin(D6_SWITCH_PIN));
 	HAL_Delay(100);
 
-	//paramScreenDisplay();
-	gearboxScreenDisplay();
+	paramScreenDisplay();
+	//gearboxScreenDisplay();
 
 	ecuVal.IAT = 40;
 	ecuVal.batt_v = 12.6;
@@ -165,28 +166,43 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
 #ifdef DISP_ACTIVE
-	if(devState.screenNo == PARAM) {
-		DISP_DrawNum(105, 15, (int32_t)ecuVal.CLT, &Font24, BRRED, BLACK);
-		DISP_DrawNum(40, 70, (int32_t)ecuVal.oil_temp, &Font24, BRRED, BLACK);
-		DISP_DrawNum(160, 70, (int32_t)ecuVal.oil_bar, &Font24, BRRED, BLACK);
-		DISP_DrawNum(40, 130, (int32_t)ecuVal.batt_v, &Font24, BRRED, BLACK);
-		DISP_DrawNum(160, 130, (int32_t)ecuVal.lambda, &Font24, BRRED, BLACK);
-		DISP_DrawNum(105, 207, (int32_t)ecuVal.IAT, &Font24, BRRED, BLACK);
-		ecuVal.oil_bar++;
-		ecuVal.oil_temp++;
-		ecuVal.batt_v++;
-		ecuVal.lambda++;
-		ecuVal.CLT++;
-		ecuVal.IAT++;
-	} else if(devState.screenNo == GEARBOX) {
-		DISP_DrawNum(130, 90,  vehicleVal.revGear[1], &Font24, ((vehicleVal.actGear == 1) ? BRRED : BLACK), ((vehicleVal.actGear == 1) ? BLACK : BRRED));
-		DISP_DrawNum(130, 115, vehicleVal.revGear[2], &Font24, ((vehicleVal.actGear == 2) ? BRRED : BLACK), ((vehicleVal.actGear == 2) ? BLACK : BRRED));
-		DISP_DrawNum(130, 140, vehicleVal.revGear[3], &Font24, ((vehicleVal.actGear == 3) ? BRRED : BLACK), ((vehicleVal.actGear == 3) ? BLACK : BRRED));
-		DISP_DrawNum(130, 165, vehicleVal.revGear[4], &Font24, ((vehicleVal.actGear == 4) ? BRRED : BLACK), ((vehicleVal.actGear == 4) ? BLACK : BRRED));
-		DISP_DrawNum(130, 190, vehicleVal.revGear[5], &Font24, ((vehicleVal.actGear == 5) ? BRRED : BLACK), ((vehicleVal.actGear == 5) ? BLACK : BRRED));
-	} else if(devState.screenNo == FUEL) {
+	if(devState.switchActv) {
+		if(devState.screenNo == PARAM) {
+			DISP_DrawNum(105, 15, (int32_t)ecuVal.CLT, &Font24, BRRED, BLACK);
+			DISP_DrawNum(40, 70, (int32_t)ecuVal.oil_temp, &Font24, BRRED, BLACK);
+			DISP_DrawNum(160, 70, (int32_t)ecuVal.oil_bar, &Font24, BRRED, BLACK);
+			DISP_DrawNum(40, 130, (int32_t)ecuVal.batt_v, &Font24, BRRED, BLACK);
+			DISP_DrawNum(160, 130, (int32_t)ecuVal.lambda, &Font24, BRRED, BLACK);
+			DISP_DrawNum(105, 207, (int32_t)ecuVal.IAT, &Font24, BRRED, BLACK);
+			ecuVal.oil_bar++;
+			ecuVal.oil_temp++;
+			ecuVal.batt_v++;
+			ecuVal.lambda++;
+			ecuVal.CLT++;
+			ecuVal.IAT++;
+		} else if(devState.screenNo == GEARBOX) {
+			DISP_DrawNum(60, 18, (int32_t)vehicleVal.actSpeed, &Font24, BLACK, BRRED);
+			DISP_DrawNum(60, 43, (int32_t)vehicleVal.fuelCons, &Font24, BLACK, BRRED);
+			DISP_DrawNum(130, 90,  vehicleVal.revGear[1], &Font24, ((vehicleVal.actGear == 1) ? BRRED : BLACK), ((vehicleVal.actGear == 1) ? BLACK : BRRED));
+			DISP_DrawNum(130, 115, vehicleVal.revGear[2], &Font24, ((vehicleVal.actGear == 2) ? BRRED : BLACK), ((vehicleVal.actGear == 2) ? BLACK : BRRED));
+			DISP_DrawNum(130, 140, vehicleVal.revGear[3], &Font24, ((vehicleVal.actGear == 3) ? BRRED : BLACK), ((vehicleVal.actGear == 3) ? BLACK : BRRED));
+			DISP_DrawNum(130, 165, vehicleVal.revGear[4], &Font24, ((vehicleVal.actGear == 4) ? BRRED : BLACK), ((vehicleVal.actGear == 4) ? BLACK : BRRED));
+			DISP_DrawNum(130, 190, vehicleVal.revGear[5], &Font24, ((vehicleVal.actGear == 5) ? BRRED : BLACK), ((vehicleVal.actGear == 5) ? BLACK : BRRED));
+		}
 
+		HAL_UART_Transmit(&huart2, "\nCnt ", 5, 100);
+		char b[4];
+		itoa(vehicleVal.actSpeed, b, 10);
+		HAL_UART_Transmit(&huart2, b, 4, 100);
+
+	} else {
+		if(devState.screenNo == CHANGE_TO_PARAM) {
+			paramScreenDisplay();
+		} else if(devState.screenNo == CHANGE_TO_GEARBOX) {
+			gearboxScreenDisplay();
+		}
 	}
+
 #endif
 
 //	HAL_UART_Transmit(&huart2, "dupa\n", 5, 100);
@@ -465,12 +481,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(D9_SPEED_SENS_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : D12_SWITCH_Pin */
-  GPIO_InitStruct.Pin = D12_SWITCH_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(D12_SWITCH_GPIO_Port, &GPIO_InitStruct);
-
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI1_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(EXTI1_IRQn);
@@ -482,40 +492,49 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	if(GPIO_Pin == D6_SWITCH_Pin) {
+///////////// SWITCH /////////////
+	if(GPIO_Pin == D6_SWITCH_Pin && devState.switchActv) {
+
+		devState.switchActv = 0;
+
 		if(devState.screenNo == PARAM) {
-			gearboxScreenDisplay();
-		} else if (devState.screenNo == GEARBOX) {
-			paramScreenDisplay();
+			devState.screenNo = CHANGE_TO_GEARBOX;
+
+		} else if(devState.screenNo == GEARBOX) {
+			devState.screenNo = CHANGE_TO_PARAM;
 		}
+///////////// SPEED SENSOR /////////////
 	} else if(GPIO_Pin == D9_SPEED_SENS_Pin) {
-		vehicleVal.speedSensCnt++;
+
+		if(devState.switchActv) {
+			vehicleVal.speedSensCnt++;
+
+		} else {
+			vehicleVal.speedSensCnt = 0;
+		}
 	}
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	HAL_UART_Transmit(&huart2, "\nCnt ", 5, 100);
-	char b[4];
-	itoa(vehicleVal.speedSensCnt, b, 10);
-	HAL_UART_Transmit(&huart2, b, 4, 100);
 
+	vehicleVal.actSpeed = vehicleVal.speedSensCnt;
 	vehicleVal.speedSensCnt = 0;
 }
 
 void logoScreenDisplay() {
-	devState.screenNo = LOGO;
-	DISP_Clear(BLACK);
 
+	DISP_Clear(BLACK);
 	DISP_DrawImage(gImage_samurai_logo_q1, 30, 30, 90, 90);
 	DISP_DrawImage(gImage_samurai_logo_q3, 30, 120, 90, 90);
 	DISP_DrawImage(gImage_samurai_logo_q2, 120, 30, 90, 90);
 	DISP_DrawImage(gImage_samurai_logo_q4, 120, 120, 90, 90);
+
+	devState.screenNo = LOGO;
 }
 
 void paramScreenDisplay() {
-	devState.screenNo = PARAM;
-	DISP_Clear(BLACK);
 
+	DISP_Clear(BLACK);
 	DISP_DrawString(65, 40, "WATER oC", &Font20, BLACK, BRRED);
 	DISP_DrawLine(20, 60, 220, 60, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
 	DISP_DrawLine(120, 60, 120, 120, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
@@ -527,15 +546,18 @@ void paramScreenDisplay() {
 	DISP_DrawString(130, 160, "LAMBDA", &Font20, BLACK, BRRED);
 	DISP_DrawLine(20, 180, 220, 180, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
 	DISP_DrawString(75, 182, "IAT oC", &Font20, BLACK, BRRED);
+
+	devState.screenNo = PARAM;
+	devState.switchActv = 1;
 }
 
 void gearboxScreenDisplay() {
-	devState.screenNo = GEARBOX;
-	DISP_Clear(BLACK);
 
-	DISP_DrawString(55, 40, "SPEED km/h", &Font20, BLACK, BRRED);
-	DISP_DrawLine(20, 60, 220, 60, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
-	DISP_DrawLine(120, 60, 120, 220, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_Clear(BLACK);
+	DISP_DrawString(120, 18, "km/h", &Font20, BLACK, BRRED);
+	DISP_DrawString(120, 43, "l/100km", &Font20, BLACK, BRRED);
+	DISP_DrawLine(20, 68, 220, 68, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
+	DISP_DrawLine(105, 68, 105, 220, BRRED, DOT_PIXEL_2X2, LINE_STYLE_SOLID);
 	DISP_DrawString(40, 70, "GEAR", &Font20, BLACK, BRRED);
 	DISP_DrawString(130, 70, "RPM", &Font20, BLACK, BRRED);
 	DISP_DrawString(60, 90, "1", &Font20, BLACK, BRRED);
@@ -543,14 +565,11 @@ void gearboxScreenDisplay() {
 	DISP_DrawString(60, 140, "3", &Font20, BLACK, BRRED);
 	DISP_DrawString(60, 165, "4", &Font20, BLACK, BRRED);
 	DISP_DrawString(60, 190, "5", &Font20, BLACK, BRRED);
+
+	devState.screenNo = GEARBOX;
+	devState.switchActv = 1;
 }
 
-void fuelConsScreenDisplay() {
-	devState.screenNo = FUEL;
-	DISP_Clear(BLACK);
-
-	DISP_DrawString(40, 40, "FUEL l/100km", &Font20, BLACK, BRRED);
-}
 /* USER CODE END 4 */
 
 /**

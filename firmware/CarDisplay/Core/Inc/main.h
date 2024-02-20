@@ -86,8 +86,6 @@ void Error_Handler(void);
 #define SWCLK_GPIO_Port GPIOA
 #define D13_DISP_CLK_Pin GPIO_PIN_3
 #define D13_DISP_CLK_GPIO_Port GPIOB
-#define D12_SWITCH_Pin GPIO_PIN_4
-#define D12_SWITCH_GPIO_Port GPIOB
 #define D11_DISP_DIN_Pin GPIO_PIN_5
 #define D11_DISP_DIN_GPIO_Port GPIOB
 #define D4_DISP_DC_Pin GPIO_PIN_7
@@ -118,12 +116,14 @@ typedef enum {
 	LOGO,
 	PARAM,
 	GEARBOX,
-	FUEL,
+	CHANGE_TO_PARAM,
+	CHANGE_TO_GEARBOX,
 	SCREEN_NO
 } screen;
 
 typedef struct {
 	screen screenNo;
+	uint8_t switchActv;
 } dev_state;
 /* USER CODE END Private defines */
 
