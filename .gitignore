@@ -4,5 +4,7 @@ firmware/*.ld
 firmware/*.launch
 
 pcb/CarDisplay/*-backups/*
-pcb/CarDisplay/*.kicad_sch-bak
+pcb/CarDisplay/*-bak
 pcb/CarDisplay/fp-info-cache
+pcb/CarDisplay/*.lck
+pcb/CarDisplay/*_prl
