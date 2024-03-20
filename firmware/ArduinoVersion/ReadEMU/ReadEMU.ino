@@ -43,10 +43,10 @@ void loop() {
   Paint_DrawNum(190, 70, oil_p_f, &Font24, BRRED, BLACK);
   Serial.print("Batt \t");
 	Serial.println(emu.emu_data.Batt);
-  Paint_DrawNum(40, 130, (int32_t)emu.emu_data.Batt, &Font24, BRRED, BLACK);
-  Paint_DrawString_EN(55, 130, ".", &Font24, BRRED, BLACK);
+  Paint_DrawNum(30, 130, (int32_t)emu.emu_data.Batt, &Font24, BRRED, BLACK);
+  Paint_DrawString_EN(65, 130, ".", &Font24, BRRED, BLACK);
   int32_t batt_f = (int32_t)((float)(emu.emu_data.Batt - (int32_t)emu.emu_data.Batt) * 10);
-  Paint_DrawNum(70, 130, batt_f, &Font24, BRRED, BLACK);
+  Paint_DrawNum(80, 130, batt_f, &Font24, BRRED, BLACK);
   Serial.print("IAT \t");
 	Serial.println(emu.emu_data.IAT);
   Paint_DrawNum(105, 207, (int32_t)emu.emu_data.IAT, &Font24, BRRED, BLACK);
