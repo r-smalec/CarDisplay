@@ -120,11 +120,11 @@ int main(void)
 #ifdef DISP_ACTIVE
 	DISP_Init(VERTICAL);
 	DISP_NewImage(DISP_WIDTH, DISP_HEIGHT, 0, BLACK);
-	logoScreenDisplay();
-
-	// Waiting for pressing the switch
-	while(HAL_GPIO_ReadPin(D6_SWITCH_PIN));
-	HAL_Delay(100);
+//	logoScreenDisplay();
+//
+//	// Waiting for pressing the switch
+//	while(HAL_GPIO_ReadPin(D6_SWITCH_PIN));
+//	HAL_Delay(100);
 
 	paramScreenDisplay();
 	//gearboxScreenDisplay();
@@ -193,6 +193,7 @@ int main(void)
 		HAL_UART_Transmit(&huart2, "\nCnt ", 5, 100);
 		char b[4];
 		itoa(vehicleVal.actSpeed, b, 10);
+
 		HAL_UART_Transmit(&huart2, b, 4, 100);
 
 	} else {
@@ -381,7 +382,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 9600;
+  huart1.Init.BaudRate = 19200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -517,7 +518,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
-	vehicleVal.actSpeed = vehicleVal.speedSensCnt;
+	vehicleVal.actSpeed = vehicleVal.speedSensCnt * 110 / 78;
 	vehicleVal.speedSensCnt = 0;
 }
 
